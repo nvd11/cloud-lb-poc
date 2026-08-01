@@ -22,7 +22,8 @@ resource "google_compute_backend_service" "l7_lb_backend" {
   health_checks         = [google_compute_health_check.l7_lb_hc.id]
 
   backend {
-    group = google_compute_instance_group.poc_unmig.id
+    group          = google_compute_instance_group.poc_unmig.id
+    balancing_mode = "CONNECTION"
   }
 }
 
