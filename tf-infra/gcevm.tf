@@ -35,6 +35,9 @@ resource "google_compute_instance" "poc_vm" {
     echo "<h1>Hello from GCP L7 LB Backend - $(hostname)</h1>" > /var/www/html/index.html
     systemctl restart nginx
 
+    # 启动与使能 Google Guest Agent (配置 L4 Passthrough LB 的 VIP 本地路由)
+    systemctl enable --now google-guest-agent || true
+
     # 自动恢复中断的 dpkg，补齐 SSH Host Keys，重置 systemd 频率限制并启动 ssh
     ssh-keygen -A || true
     systemctl reset-failed ssh || true
