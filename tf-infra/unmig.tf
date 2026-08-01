@@ -2,7 +2,7 @@ resource "google_compute_instance_group" "poc_unmig" {
   name        = "poc-unmanaged-instance-group"
   description = "Unmanaged Instance Group for Cloud LB PoC"
   zone        = var.zone
-  network     = var.network_name
+  network     = google_compute_instance.poc_vm.network_interface[0].network
 
   instances = [
     google_compute_instance.poc_vm.id
