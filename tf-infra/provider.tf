@@ -6,6 +6,10 @@ terraform {
       version = "~> 5.0"
     }
   }
+  backend "gcs" {
+    bucket = "jason-hsbc"
+    prefix = "cloud-lb-poc/state"
+  }
 }
 
 provider "google" {
