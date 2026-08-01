@@ -17,3 +17,13 @@ output "unmig_self_link" {
   description = "The self_link of the Unmanaged Instance Group"
   value       = google_compute_instance_group.poc_unmig.self_link
 }
+
+output "l4_lb_public_ip" {
+  description = "The public IP address of the L4 Load Balancer"
+  value       = google_compute_address.l4_lb_ip.address
+}
+
+output "ssh_command_via_lb" {
+  description = "Command to SSH into internal VM via L4 Load Balancer"
+  value       = "ssh gateman@${google_compute_address.l4_lb_ip.address}"
+}
