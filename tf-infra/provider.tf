@@ -8,7 +8,7 @@ terraform {
   }
   backend "gcs" {
     bucket = "jason-hsbc"
-    prefix = "cloud-lb-poc/state"
+    prefix = "terraform/cloud-lb-poc/state"
   }
 }
 
