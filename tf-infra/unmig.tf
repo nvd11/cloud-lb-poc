@@ -9,6 +9,11 @@ resource "google_compute_instance_group" "poc_unmig" {
   ]
 
   named_port {
+    name = "ssh"
+    port = "22"
+  }
+
+  named_port {
     name = "http"
     port = "80"
   }
