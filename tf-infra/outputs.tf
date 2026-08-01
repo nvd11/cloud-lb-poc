@@ -27,3 +27,13 @@ output "ssh_command_via_lb" {
   description = "Command to SSH into internal VM via L4 Load Balancer"
   value       = "ssh gateman@${google_compute_address.l4_lb_ip.address}"
 }
+
+output "l7_lb_public_ip" {
+  description = "The public IP address of the L7 Load Balancer"
+  value       = google_compute_global_address.l7_lb_ip.address
+}
+
+output "curl_command_via_l7_lb" {
+  description = "Command to test HTTP access via L7 Load Balancer"
+  value       = "curl -i http://${google_compute_global_address.l7_lb_ip.address}/"
+}
