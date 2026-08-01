@@ -4,13 +4,13 @@ resource "google_compute_address" "l4_lb_ip" {
   region = var.region
 }
 
-# 2. TCP 健康检查 (针对 SSH 22 端口)
+# 2. TCP 健康检查 (针对 80 端口)
 resource "google_compute_region_health_check" "l4_lb_hc" {
   name   = "poc-l4-lb-health-check"
   region = var.region
 
   tcp_health_check {
-    port = "22"
+    port = "80"
   }
 }
 
@@ -46,7 +46,7 @@ resource "google_compute_firewall" "allow_ssh_lb" {
 
   allow {
     protocol = "tcp"
-    ports    = ["22"]
+    ports    = ["22", "80"]
   }
 
   source_ranges = [
