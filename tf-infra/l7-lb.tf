@@ -1,3 +1,21 @@
+# 0. 创建 Zonal Network Endpoint Group (NEG)，解耦 L7 ALB 与 L4 UnMIG 绑定的 GCP 限制
+resource "google_compute_network_endpoint_group" "poc_neg_l7" {
+  name                  = "poc-neg-l7"
+  network               = var.network_name
+  subnetwork            = var.subnet_name
+  default_port          = "80"
+  zone                  = var.zone
+  network_endpoint_type = "GCE_VM_IP_PORT"
+}
+
+resource "google_compute_network_endpoint" "poc_neg_endpoint" {
+  network_endpoint_group = google_compute_network_endpoint_group.poc_neg_l7.name
+  instance               = google_compute_instance.poc_vm.name
+  port                   = 80
+  ip_address             = google_compute_instance.poc_vm.network_interface[0].network_ip
+  zone                   = var.zone
+}
+
 # 1. 预留全局静态公网 IP (7层 HTTP LB 专享)
 resource "google_compute_global_address" "l7_lb_ip" {
   name = "poc-l7-lb-ip"
@@ -13,7 +31,7 @@ resource "google_compute_health_check" "l7_lb_hc" {
   }
 }
 
-# 3. 全局 Backend Service (关联 UnMIG 实例组的 named_port "http")
+# 3. 全局 Backend Service (关联 Zonal NEG 80 端口)
 resource "google_compute_backend_service" "l7_lb_backend" {
   name                  = "poc-l7-lb-backend-service"
   protocol              = "HTTP"
@@ -22,8 +40,9 @@ resource "google_compute_backend_service" "l7_lb_backend" {
   health_checks         = [google_compute_health_check.l7_lb_hc.id]
 
   backend {
-    group          = google_compute_instance_group.poc_unmig_l7.id
-    balancing_mode = "UTILIZATION"
+    group                 = google_compute_network_endpoint_group.poc_neg_l7.id
+    balancing_mode        = "RATE"
+    max_rate_per_endpoint = 100
   }
 }
 
