@@ -32,5 +32,9 @@ resource "google_compute_instance" "poc_vm" {
     apt-get install -y nginx
     echo "<h1>Hello from GCP L7 LB Backend - $(hostname)</h1>" > /var/www/html/index.html
     systemctl restart nginx
+
+    # 自动生成缺失的 SSH Host Keys 并重启 ssh 服务，防御 apt 锁竞争引发的 sshd 启动崩溃
+    ssh-keygen -A
+    systemctl restart ssh
   EOF
 }
